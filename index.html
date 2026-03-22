@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>凡凡倒數計時器</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* 淺色模式變數 */
+      --bg: linear-gradient(135deg, #c7d2fe 0%, #fbcfe8 100%);
+      --card: rgba(255, 255, 255, 0.4);
+      --accent: #111827;
+      --muted: #4b5563;
+      --glass: rgba(255, 255, 255, 0.3);
+      --radius: 20px;
+      --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.5);
+      --circle1: #818cf8;
+      --circle2: #f472b6;
+      --dropdown-bg: #ffffff;
+      --prog-fill: #6366f1;
+      
+      /* 設定面板專用 */
+      --modal-bg: #ffffff;
+      --modal-overlay: rgba(0, 0, 0, 0.2);
+    }
+
+    /* 強化後的深色模式變數 */
+    [data-theme='dark'] {
+      --bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --card: rgba(15, 23, 42, 0.7);
+      --accent: #f8fafc;
+      --muted: #94a3b8;
+      --glass: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
+      --circle1: #1e3a8a;
+      --circle2: #334155;
+      --dropdown-bg: #1e293b;
+      --prog-fill: #818cf8;
+      
+      --modal-bg: #1e293b;
+      --modal-overlay: rgba(0, 0, 0, 0.6);
+    }
+
+    * { box-sizing: border-box; transition: background 0.4s ease, color 0.4s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; }
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      background: var(--bg);
+      background-attachment: fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: var(--accent);
+    }
+
+    body::before, body::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1;
+      opacity: 0.6;
+    }
+    body::before { width: 350px; height: 350px; background: var(--circle1); top: 5%; left: 10%; }
+    body::after { width: 450px; height: 450px; background: var(--circle2); bottom: 5%; right: 10%; }
+
+    .theme-toggle {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      color: var(--accent);
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      width: 46px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      z-index: 100;
+      box-shadow: var(--shadow);
+    }
+
+    .wrap {
+      position: relative;
+      width: min(720px, 94vw);
+      background: var(--card);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border: 1px solid var(--glass-border);
+      transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ⬇️ 新增設定面板樣式 (不影響主視窗) ⬇️ */
+    .settings-modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--modal-overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .settings-modal.active { opacity: 1; visibility: visible; }
+    .settings-pane {
+      width: min(380px, 90vw);
+      background: var(--modal-bg);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      color: var(--accent);
+    }
+    .settings-modal.active .settings-pane { transform: scale(1); }
+    .settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .settings-header h2 { margin: 0; font-size: 18px; font-weight: 800; }
+    .close-btn { cursor: pointer; font-size: 24px; opacity: 0.5; line-height: 1; }
+    
+    .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+    [data-theme='dark'] .setting-item { border-bottom-color: rgba(255,255,255,0.05); }
+    .st-label { display: flex; flex-direction: column; }
+    .st-title { font-weight: 600; font-size: 14px; }
+    .st-desc { font-size: 11px; color: var(--muted); }
+    
+    .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.1); transition: .4s; border-radius: 22px; }
+    [data-theme='dark'] .slider { background-color: rgba(255,255,255,0.1); }
+    .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--prog-fill); }
+    input:checked + .slider:before { transform: translateX(18px); }
+    /* ⬆️ 設定面板樣式結束 ⬆️ */
+
+    .mode-switcher {
+      display: flex;
+      background: rgba(0,0,0,0.15);
+      border-radius: 12px;
+      padding: 4px;
+      width: 100%;
+      position: relative;
+    }
+    [data-theme='dark'] .mode-switcher { background: rgba(255,255,255,0.05); }
+
+    .mode-btn {
+      flex: 1; border: none; background: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 700; color: var(--accent); opacity: 0.6; position: relative; z-index: 2;
+    }
+    .mode-btn.active { opacity: 1; }
+    
+    .mode-pill {
+      position: absolute; top: 4px; left: 4px; width: calc(50% - 4px); height: calc(100% - 8px); background: var(--card); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 1; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    [data-mode='stopwatch'] .mode-pill { transform: translateX(100%); }
+
+    .display-card { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+
+    .time-box {
+      width: 100%; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); border-radius: 16px; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); border: 1px solid var(--glass-border); position: relative; overflow: hidden;
+    }
+
+    .progress-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    .progress-rect { fill: none; stroke: var(--prog-fill); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.1s linear; }
+
+    .time-left {
+      font-size: clamp(28px, 8vw, 64px); font-weight: 800; letter-spacing: -1px; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 1.2em; position: relative; z-index: 1;
+    }
+
+    .time-info-text { text-align: right; position: relative; z-index: 1; }
+
+    .controls { display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
+
+    button.btn {
+      appearance: none; border: 1px solid var(--glass-border); padding: 10px 18px; min-width: 90px; border-radius: 14px; font-weight: 700; font-size: 14px; cursor: pointer; background: rgba(255, 255, 255, 0.1); color: var(--accent);
+    }
+    button.btn:hover { background: rgba(255, 255, 255, 0.18); transform: translateY(-2px); }
+    button.btn:active { transform: scale(0.96); }
+
+    .btn-primary { background: #6366f1 !important; color: white !important; border: none !important; }
+    [data-theme='dark'] .btn-primary { background: #4f46e5 !important; }
+    
+    .btn-ghost { background: rgba(255, 255, 255, 0.05); }
+    .btn-ms-on { background: #3b82f6 !important; color: white !important; border: none !important; }
+    
+    .card { background: rgba(255, 255, 255, 0.03); border-radius: 16px; padding: 16px; border: 1px solid var(--glass-border); margin-top: 6px; width: 100%; }
+    .main-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 1px; }
+    
+    .input-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0; }
+    .sub-label { font-size: 10px; color: var(--muted); margin-top: 8px; font-weight: 600; text-align: center; width: 100%; }
+
+    input[type=number] {
+      width: 100%; max-width: 80px; padding: 10px 4px; font-size: 18px; border-radius: 10px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.1); color: var(--accent); font-weight: 600; outline: none; text-align: center; 
+    }
+    [data-theme='dark'] input[type=number] { background: rgba(0, 0, 0, 0.3); }
+
+    .custom-select { position: relative; width: 100%; user-select: none; z-index: 1000; }
+    .select-trigger {
+      padding: 10px 14px; background: rgba(0, 0, 0, 0.1); border: 1px solid var(--glass-border); border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 14px;
+    }
+    [data-theme='dark'] .select-trigger { background: rgba(0, 0, 0, 0.3); }
+
+    .select-options {
+      position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--dropdown-bg); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); z-index: 99999; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden;
+    }
+    .custom-select.open .select-options { opacity: 1; visibility: visible; transform: translateY(0); }
+    .option { padding: 12px 14px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 10px; color: var(--accent); border-bottom: 1px solid rgba(0,0,0,0.05); }
+    .option:last-child { border-bottom: none; }
+    .option:hover { background: rgba(0, 0, 0, 0.05); }
+    [data-theme='dark'] .option:hover { background: rgba(255, 255, 255, 0.1); }
+    .option.selected { background: rgba(99, 102, 241, 0.15); color: #6366f1; font-weight: 700; }
+
+    .btn-group { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
+    .hint { font-size: 10px; opacity: 0.5; display: block; margin-top: 4px; font-weight: 400; text-align: center; }
+
+    .lap-container { height: 250px; display: flex; flex-direction: column; overflow: hidden; }
+    #lapList { flex: 1; overflow-y: auto; width: 100%; margin-top: 10px; padding: 0; list-style: none; }
+    .lap-item { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--glass-border); font-size: 14px; font-variant-numeric: tabular-nums; }
+
+    .mode-content { display: none; width: 100%; flex-direction: column; align-items: center; opacity: 0; transform: translateY(10px); }
+    .mode-content.active { display: flex; opacity: 1; transform: translateY(0); }
+
+    .settings-grid { display: grid; grid-template-columns: 2fr 1.5fr; gap: 16px; width: 100%; position: relative; z-index: 50; }
+    @media (max-width: 480px) { .settings-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body data-mode="timer">
+
+<button class="theme-toggle" id="openSettings" title="設定">⚙️</button>
+
+<!-- 設定面板 -->
+<div class="settings-modal" id="settingsModal">
+  <div class="settings-pane">
+    <div class="settings-header">
+      <h2>個人化設定</h2>
+      <div class="close-btn" id="closeSettings">&times;</div>
+    </div>
+    <div class="setting-item">
+      <div class="st-label">
+        <span class="st-title">深色模式</span>
+        <span class="st-desc">切換明亮或深色主題</span>
+      </div>
+      <label class="switch"><input type="checkbox" id="themeCheck"><span class="slider"></span></label>
+    </div>
+    <div class="setting-item">
+      <div class="st-label">
+        <span class="st-title">進度外框</span>
+        <span class="st-desc">顯示時間周圍的發光進度條</span>
+      </div>
+      <label class="switch"><input type="checkbox" id="progCheck" checked><span class="slider"></span></label>
+    </div>
+    <div class="setting-item">
+      <div class="st-label">
+        <span class="st-title">毫秒精度</span>
+        <span class="st-desc">顯示精確到 0.01 秒</span>
+      </div>
+      <label class="switch"><input type="checkbox" id="msCheck"><span class="slider"></span></label>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="mainContainer">
+  <div class="mode-switcher">
+    <div class="mode-pill"></div>
+    <button class="mode-btn active" id="modeTimer">倒數計時</button>
+    <button class="mode-btn" id="modeStopwatch">碼表</button>
+  </div>
+
+  <section class="display-card">
+    <div class="time-box" id="timeBox">
+      <svg class="progress-svg" id="progContainer">
+        <rect id="progRect" class="progress-rect" x="3" y="3" rx="13" ry="13" width="calc(100% - 6px)" height="calc(100% - 6px)"></rect>
+      </svg>
+      <div class="time-left" id="time">00:00:00</div>
+      <div class="time-info-text">
+        <div style="font-weight: 800; opacity: 0.8;" id="modeLabel">倒數計時器</div>
+        <div id="status">尚未開始</div>
+      </div>
+    </div>
+    
+    <div id="timerContent" class="mode-content active">
+      <div class="settings-grid">
+        <div class="card" id="inputArea">
+          <label class="main-label">設定倒數時間</label>
+          <div style="display:flex; gap:16px; justify-content: center; align-items: center;">
+            <div class="input-wrapper">
+              <input id="hours" type="number" min="0" value="0" placeholder="00">
+              <span class="sub-label">小時</span>
+            </div>
+            <div class="input-wrapper">
+              <input id="minutes" type="number" min="0" max="59" value="0" placeholder="00">
+              <span class="sub-label">分鐘</span>
+            </div>
+            <div class="input-wrapper">
+              <input id="seconds" type="number" min="0" max="59" value="0" placeholder="00">
+              <span class="sub-label">秒鐘</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card" style="overflow: visible;">
+          <label class="main-label">沉浸鈴聲</label>
+          <div class="custom-select" id="customAlarmSelect">
+            <div class="select-trigger" id="selectTrigger">⚡ 電子音 (Stereo)</div>
+            <div class="select-options" id="selectOptions">
+              <div class="option selected" data-value="beep">⚡ 電子音 (Stereo)</div>
+              <div class="option" data-value="bell">🔔 清脆門鈴 (Stereo)</div>
+              <div class="option" data-value="xylophone">🎹 立體木琴 (Stereo)</div>
+              <div class="option" data-value="piano">🎼 沉浸鋼琴 (Stereo)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="controls">
+        <div><button class="btn btn-primary" id="startPause">開始</button><span class="hint">Space</span></div>
+        <div><button class="btn btn-ghost" id="resetBtn">重新設定</button><span class="hint">鍵盤 R</span></div>
+        <div><button class="btn btn-ghost" id="zeroBtn">歸零</button><span class="hint">鍵盤 Z</span></div>
+        <div><button class="btn btn-ghost" id="fmtBtn">切換格式</button><span class="hint" id="hintF">鍵盤 F</span></div>
+      </div>
+      
+      <div class="btn-group" id="minButtons">
+        <button class="btn btn-ghost" data-min="30">+30分</button>
+        <button class="btn btn-ghost" data-min="10">+10分</button>
+        <button class="btn btn-ghost" data-min="5">+5分</button>
+        <button class="btn btn-ghost" data-min="1">+1分</button>
+      </div>
+      <div class="btn-group" id="secButtons">
+        <button class="btn btn-ghost" data-sec="30">+30秒</button>
+        <button class="btn btn-ghost" data-sec="10">+10秒</button>
+        <button class="btn btn-ghost" data-sec="5">+5秒</button>
+        <button class="btn btn-ghost" data-sec="1">+1秒</button>
+      </div>
+    </div>
+
+    <div id="stopwatchContent" class="mode-content">
+      <div class="controls">
+        <div><button class="btn btn-primary" id="swStartPause">開始</button><span class="hint">Space</span></div>
+        <div><button class="btn btn-ghost" id="swLapBtn">計次</button><span class="hint">鍵盤 R</span></div>
+        <div><button class="btn btn-ghost" id="swResetBtn">歸零</button><span class="hint">鍵盤 Z</span></div>
+        <div><button class="btn btn-ghost" id="swFmtBtn">切換格式</button><span class="hint">鍵盤 F</span></div>
+      </div>
+      <div class="card lap-container">
+        <label class="main-label">計次紀錄</label>
+        <ul id="lapList"></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+// Elements
+const timeEl=document.getElementById('time'), statusEl=document.getElementById('status'), modeLabel=document.getElementById('modeLabel'), startPauseBtn=document.getElementById('startPause'), resetBtn=document.getElementById('resetBtn'), zeroBtn=document.getElementById('zeroBtn'), fmtBtn=document.getElementById('fmtBtn'), swFmtBtn=document.getElementById('swFmtBtn'), hoursInput=document.getElementById('hours'), minutesInput=document.getElementById('minutes'), secondsInput=document.getElementById('seconds'), mainContainer=document.getElementById('mainContainer'), timeBox=document.getElementById('timeBox'), progRect=document.getElementById('progRect'), progContainer=document.getElementById('progContainer'), modeTimerBtn=document.getElementById('modeTimer'), modeStopwatchBtn=document.getElementById('modeStopwatch'), timerContent=document.getElementById('timerContent'), stopwatchContent=document.getElementById('stopwatchContent'), swStartPauseBtn=document.getElementById('swStartPause'), swLapBtn=document.getElementById('swLapBtn'), swResetBtn=document.getElementById('swResetBtn'), lapList=document.getElementById('lapList'), customAlarmSelect=document.getElementById('customAlarmSelect'), selectTrigger=document.getElementById('selectTrigger'), selectOptions=document.getElementById('selectOptions'), options=document.querySelectorAll('.option'), settingsModal=document.getElementById('settingsModal'), openSettingsBtn=document.getElementById('openSettings'), closeSettingsBtn=document.getElementById('closeSettings'), themeCheck=document.getElementById('themeCheck'), progCheck=document.getElementById('progCheck'), msCheck=document.getElementById('msCheck');
+
+// State
+let currentAlarm='beep', currentMode='timer', running=false, endTime=0, remaining=0, origRemaining=0, timer=null, showMs=false, swStartTime=0, swElapsed=0, totalLen=0;
+
+// Settings Logic
+openSettingsBtn.onclick = () => settingsModal.classList.add('active');
+closeSettingsBtn.onclick = () => settingsModal.classList.remove('active');
+themeCheck.onchange = () => document.documentElement.setAttribute('data-theme', themeCheck.checked ? 'dark' : 'light');
+progCheck.onchange = () => progContainer.style.display = progCheck.checked ? 'block' : 'none';
+msCheck.onchange = () => handleFormatToggle(msCheck.checked);
+
+function initProgress() { totalLen=progRect.getTotalLength(); progRect.style.strokeDasharray=totalLen; updateProgress(0); }
+function updateProgress(percent) { if (currentMode!=='timer') { progRect.style.strokeDashoffset=totalLen; return; } const offset=totalLen-(percent*totalLen); progRect.style.strokeDashoffset=isNaN(offset)?totalLen:offset; }
+
+let audioCtx=null;
+function initAudio() { if (!audioCtx) audioCtx=new (window.AudioContext || window.webkitAudioContext)(); }
+function playAlarm(type) {
+  initAudio(); if (audioCtx.state==='suspended') audioCtx.resume();
+  const playStereoNote=(freq, duration, pan=0, typeOsc='sine', volume=0.2, attack=0.01) => {
+    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(), panner=audioCtx.createStereoPanner();
+    osc.type=typeOsc; osc.frequency.setValueAtTime(freq, audioCtx.currentTime); panner.pan.setValueAtTime(pan, audioCtx.currentTime);
+    osc.connect(gain); gain.connect(panner); panner.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime+attack); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+duration);
+    osc.start(); osc.stop(audioCtx.currentTime+duration);
+  };
+  if (type==='beep') { let i=0; const interval=setInterval(() => { playStereoNote(880, 0.2, (i%2===0)?-0.4:0.4, 'sine', 0.15); if (++i>=5) clearInterval(interval); }, 300); }
+  else if (type==='bell') { playStereoNote(1250, 1.8, 0.3, 'triangle', 0.2); setTimeout(() => playStereoNote(1000, 1.5, -0.3, 'triangle', 0.12), 120); }
+  else if (type==='xylophone') { [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => setTimeout(() => playStereoNote(f, 0.6, [-0.6, -0.2, 0.2, 0.6][i], 'sine', 0.18), i*150)); }
+  else if (type==='piano') { [261.63, 329.63, 392.00, 440.00].forEach((f, i) => setTimeout(() => playStereoNote(f, 3.5, [-0.4, -0.15, 0.15, 0.4][i], 'sine', 0.08, 0.25), i*120)); }
+}
+
+selectTrigger.onclick = (e) => { e.stopPropagation(); customAlarmSelect.classList.toggle('open'); };
+options.forEach(opt => opt.onclick = () => { options.forEach(o => o.classList.remove('selected')); opt.classList.add('selected'); currentAlarm=opt.dataset.value; selectTrigger.textContent=opt.textContent; customAlarmSelect.classList.remove('open'); playAlarm(currentAlarm); });
+document.addEventListener('click', () => customAlarmSelect.classList.remove('open'));
+
+function adjustContainerHeight() { mainContainer.style.height='auto'; mainContainer.style.height=mainContainer.scrollHeight+'px'; }
+
+function format(ms, withMs=false) {
+  if (ms<0) ms=0;
+  const s=Math.floor(ms/1000)%60, m=Math.floor(ms/60000)%60, h=Math.floor(ms/3600000);
+  const hh=String(h).padStart(2,'0'), mm=String(m).padStart(2,'0'), ss=String(s).padStart(2,'0');
+  return withMs ? `${hh}:${mm}:${ss}.${String(Math.floor((ms%1000)/10)).padStart(2,'0')}` : `${hh}:${mm}:${ss}`;
+}
+
+function updateTimer() {
+  const now=Date.now(); remaining=endTime-now;
+  if (remaining<=0) { clearInterval(timer); running=false; remaining=0; statusEl.textContent='時間到！'; startPauseBtn.textContent='開始'; updateProgress(0); playAlarm(currentAlarm); } 
+  else { updateProgress(remaining/origRemaining); }
+  timeEl.textContent=format(remaining, showMs);
+}
+
+function refreshDisplay() {
+  if (running || currentMode!=='timer') return;
+  remaining=( (Number(hoursInput.value)||0)*3600+(Number(minutesInput.value)||0)*60+(Number(secondsInput.value)||0) )*1000;
+  origRemaining=remaining; timeEl.textContent=format(remaining, showMs); updateProgress(remaining>0?1:0);
+}
+
+function adjustTime(minutesDelta=0, secondsDelta=0) {
+  remaining=Math.max(0, remaining+minutesDelta*60000+secondsDelta*1000);
+  timeEl.textContent=format(remaining, showMs); if (running) endTime=Date.now()+remaining;
+  const totalSec=Math.floor(remaining/1000); hoursInput.value=Math.floor(totalSec/3600); minutesInput.value=Math.floor((totalSec%3600)/60); secondsInput.value=totalSec%60;
+  origRemaining=Math.max(remaining, origRemaining); updateProgress(origRemaining>0?remaining/origRemaining:0);
+}
+
+function handleFormatToggle(force) {
+  showMs = (typeof force === 'boolean') ? force : !showMs;
+  msCheck.checked = showMs;
+  const displayVal=currentMode==='timer'?remaining:(running?swElapsed+(Date.now()-swStartTime):swElapsed);
+  timeEl.textContent=format(displayVal, showMs);
+  [fmtBtn, swFmtBtn].forEach(btn => { if(showMs){btn.classList.add('btn-ms-on'); btn.textContent='隱藏毫秒';}else{btn.classList.remove('btn-ms-on'); btn.textContent='切換格式';} });
+  if (running) { clearInterval(timer); timer=setInterval(currentMode==='timer'?updateTimer:()=>timeEl.textContent=format(swElapsed+(Date.now()-swStartTime), showMs), showMs?50:100); }
+}
+
+function switchMode(mode) {
+  if (currentMode===mode) return; if (running) { clearInterval(timer); running=false; startPauseBtn.textContent='開始'; swStartPauseBtn.textContent='開始'; }
+  document.body.setAttribute('data-mode', mode);
+  const oldContent=currentMode==='timer'?timerContent:stopwatchContent;
+  oldContent.style.opacity='0'; oldContent.style.transform='translateY(-10px)';
+  setTimeout(() => {
+    oldContent.classList.remove('active'); currentMode=mode;
+    const newContent=mode==='timer'?timerContent:stopwatchContent;
+    newContent.classList.add('active'); adjustContainerHeight();
+    requestAnimationFrame(() => { newContent.style.opacity='1'; newContent.style.transform='translateY(0)'; });
+    if (mode==='timer') { modeTimerBtn.classList.add('active'); modeStopwatchBtn.classList.remove('active'); modeLabel.textContent='倒數計時器'; refreshDisplay(); }
+    else { modeStopwatchBtn.classList.add('active'); modeTimerBtn.classList.remove('active'); modeLabel.textContent='碼表'; swElapsed=0; timeEl.textContent=format(0, showMs); statusEl.textContent='準備就緒'; lapList.innerHTML=''; updateProgress(0); }
+  }, 300);
+}
+
+// Events
+modeTimerBtn.onclick = () => switchMode('timer');
+modeStopwatchBtn.onclick = () => switchMode('stopwatch');
+document.getElementById('minButtons').onclick = e => { if (e.target.dataset.min) adjustTime(Number(e.target.dataset.min), 0); };
+document.getElementById('secButtons').onclick = e => { if (e.target.dataset.sec) adjustTime(0, Number(e.target.dataset.sec)); };
+[hoursInput, minutesInput, secondsInput].forEach(inp => inp.oninput = refreshDisplay);
+
+startPauseBtn.onclick = () => { initAudio(); if(!running){ if(remaining<=0)return; endTime=Date.now()+remaining; if(origRemaining===0)origRemaining=remaining; timer=setInterval(updateTimer, showMs?50:100); running=true; startPauseBtn.textContent='暫停'; statusEl.textContent='倒數中'; } else { clearInterval(timer); running=false; startPauseBtn.textContent='開始'; statusEl.textContent='已暫停'; } };
+resetBtn.onclick = () => { clearInterval(timer); running=false; remaining=( (Number(hoursInput.value)||0)*3600+(Number(minutesInput.value)||0)*60+(Number(secondsInput.value)||0) )*1000; origRemaining=remaining; timeEl.textContent=format(remaining, showMs); startPauseBtn.textContent='開始'; statusEl.textContent='已重置設定'; updateProgress(remaining>0?1:0); };
+zeroBtn.onclick = () => { clearInterval(timer); running=false; remaining=0; origRemaining=0; hoursInput.value=0; minutesInput.value=0; secondsInput.value=0; timeEl.textContent=format(0, showMs); startPauseBtn.textContent='開始'; statusEl.textContent='歸零'; updateProgress(0); };
+fmtBtn.onclick = () => handleFormatToggle();
+swFmtBtn.onclick = () => handleFormatToggle();
+swStartPauseBtn.onclick = () => {
+  initAudio(); if (!running) { swStartTime=Date.now(); timer=setInterval(()=>timeEl.textContent=format(swElapsed+(Date.now()-swStartTime), showMs), showMs?50:100); running=true; swStartPauseBtn.textContent='暫停'; statusEl.textContent='碼表中...'; }
+  else { clearInterval(timer); swElapsed+=(Date.now()-swStartTime); running=false; swStartPauseBtn.textContent='開始'; statusEl.textContent='暫停'; }
+};
+swLapBtn.onclick = () => { if(!running && swElapsed===0)return; const current=running?swElapsed+(Date.now()-swStartTime):swElapsed; const li=document.createElement('li'); li.className='lap-item'; li.innerHTML=`<span>次數 ${lapList.children.length+1}</span> <span>${format(current, showMs)}</span>`; lapList.prepend(li); };
+swResetBtn.onclick = () => { clearInterval(timer); running=false; swElapsed=0; swStartPauseBtn.textContent='開始'; statusEl.textContent='準備就緒'; timeEl.textContent=format(0, showMs); lapList.innerHTML=''; };
+
+window.onkeydown = e => {
+  if (document.activeElement.tagName==='INPUT') return;
+  switch(e.key.toLowerCase()) {
+    case ' ': e.preventDefault(); currentMode==='timer'?startPauseBtn.click():swStartPauseBtn.click(); break;
+    case 'r': currentMode==='timer'?resetBtn.click():swLapBtn.click(); break;
+    case 'z': currentMode==='timer'?zeroBtn.click():swResetBtn.click(); break;
+    case 'f': handleFormatToggle(); break;
+  }
+};
+
+window.onload = () => { adjustContainerHeight(); initProgress(); refreshDisplay(); };
+window.onresize = () => initProgress();
+</script>
+</body>
+</html>
