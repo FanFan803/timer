@@ -39,7 +39,6 @@
       --modal-overlay: rgba(0, 0, 0, 0.6);
     }
 
-    /* 基礎過渡動畫時間 */
     * { box-sizing: border-box; transition: background 0.4s ease, color 0.4s ease, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.1s ease; }
     html, body { height: 100%; overflow: hidden; }
 
@@ -66,7 +65,6 @@
     body::before { width: 350px; height: 350px; background: var(--circle1); top: 5%; left: 10%; }
     body::after { width: 450px; height: 450px; background: var(--circle2); bottom: 5%; right: 10%; }
 
-    /* 設定按鈕樣式優化：單一顏色與顯眼的對比 */
     .theme-toggle {
       position: fixed;
       top: 30px;
@@ -87,18 +85,9 @@
       z-index: 100;
       box-shadow: var(--shadow);
     }
-    .theme-toggle svg {
-      width: 24px;
-      height: 24px;
-      fill: currentColor; /* 使用當前文字顏色，達成單一顏色效果 */
-    }
-    .theme-toggle:hover {
-      background: rgba(255, 255, 255, 0.5);
-      transform: rotate(45deg); /* 懸停時旋轉增加動感 */
-    }
-    [data-theme='dark'] .theme-toggle:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
+    .theme-toggle svg { width: 24px; height: 24px; fill: currentColor; }
+    .theme-toggle:hover { background: rgba(255, 255, 255, 0.5); transform: rotate(45deg); }
+    [data-theme='dark'] .theme-toggle:hover { background: rgba(255, 255, 255, 0.2); }
     .theme-toggle.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
     .wrap {
@@ -114,7 +103,6 @@
       border: 1px solid var(--glass-border);
     }
 
-    /* 模式切換內容動畫：0.6s */
     .mode-content { 
       display: none; 
       width: 100%; 
@@ -181,9 +169,7 @@
     [data-theme='dark'] .mode-switcher { background: rgba(255,255,255,0.05); }
     .mode-switcher.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
 
-    .mode-btn {
-      flex: 1; border: none; background: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 700; color: var(--accent); opacity: 0.6; position: relative; z-index: 2;
-    }
+    .mode-btn { flex: 1; border: none; background: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 700; color: var(--accent); opacity: 0.6; position: relative; z-index: 2; }
     .mode-btn.active { opacity: 1; }
     
     .mode-pill {
@@ -201,17 +187,13 @@
     .progress-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
     .progress-rect { fill: none; stroke: var(--prog-fill); stroke-width: 6; stroke-linecap: square; transition: stroke-dashoffset 0.1s linear; }
 
-    .time-left {
-      font-size: clamp(28px, 8vw, 64px); font-weight: 800; letter-spacing: -1px; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 1.2em; position: relative; z-index: 1;
-    }
+    .time-left { font-size: clamp(28px, 8vw, 64px); font-weight: 800; letter-spacing: -1px; color: var(--accent); font-variant-numeric: tabular-nums; min-width: 1.2em; position: relative; z-index: 1; }
 
     .time-info-text { text-align: right; position: relative; z-index: 1; }
 
     .controls { display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; width: fit-content; margin-left: auto; margin-right: auto; }
 
-    button.btn {
-      appearance: none; border: 1px solid var(--glass-border); padding: 10px 18px; min-width: 90px; border-radius: 14px; font-weight: 700; font-size: 14px; cursor: pointer; background: rgba(255, 255, 255, 0.1); color: var(--accent);
-    }
+    button.btn { appearance: none; border: 1px solid var(--glass-border); padding: 10px 18px; min-width: 90px; border-radius: 14px; font-weight: 700; font-size: 14px; cursor: pointer; background: rgba(255, 255, 255, 0.1); color: var(--accent); }
     button.btn:hover { background: rgba(255, 255, 255, 0.18); transform: translateY(-2px); }
     button.btn:active { transform: scale(0.96); }
 
@@ -226,27 +208,19 @@
     .input-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 0; }
     .sub-label { font-size: 11px; color: var(--muted); margin-top: 8px; font-weight: 600; text-align: center; width: 100%; }
 
-    input[type=number] {
-      width: 100%; max-width: 140px; height: 48px; padding: 6px; font-size: 24px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.1); color: var(--accent); font-weight: 700; outline: none; text-align: center;
-    }
+    input[type=number] { width: 100%; max-width: 140px; height: 48px; padding: 6px; font-size: 24px; border-radius: 12px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.1); color: var(--accent); font-weight: 700; outline: none; text-align: center; }
     [data-theme='dark'] input[type=number] { background: rgba(0, 0, 0, 0.3); }
 
     .custom-select { position: relative; width: 100%; user-select: none; z-index: 1000; max-width: 180px; }
-    .select-trigger {
-      padding: 8px 12px; background: rgba(0, 0, 0, 0.1); border: 1px solid var(--glass-border); border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 13px;
-    }
-    .select-options {
-      position: absolute; top: calc(100% + 8px); right: 0; min-width: 180px; background: var(--dropdown-bg); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); z-index: 99999; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden;
-    }
+    .select-trigger { padding: 8px 12px; background: rgba(0, 0, 0, 0.1); border: 1px solid var(--glass-border); border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 13px; }
+    .select-options { position: absolute; top: calc(100% + 8px); right: 0; min-width: 180px; background: var(--dropdown-bg); border: 1px solid var(--glass-border); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); z-index: 99999; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
     .custom-select.open .select-options { opacity: 1; visibility: visible; transform: translateY(0); }
     .option { padding: 10px 14px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 10px; color: var(--accent); border-bottom: 1px solid rgba(0,0,0,0.05); }
     .option:hover { background: rgba(0, 0, 0, 0.05); }
 
     .timer-quick-group { width: fit-content; margin-left: auto; margin-right: auto; }
 
-    .btn-grid { 
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; position: relative; z-index: 1; width: 100%;
-    }
+    .btn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; position: relative; z-index: 1; width: 100%; }
     .btn-grid button.btn { min-width: 0; width: 100%; padding: 10px 5px; display: block; }
 
     .hint { font-size: 10px; opacity: 0.5; display: block; margin-top: 4px; font-weight: 400; text-align: center; }
@@ -256,15 +230,10 @@
     .lap-item { display: flex; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid var(--glass-border); font-size: 14px; font-variant-numeric: tabular-nums; }
 
     #pomoEditor { display: none; flex-direction: column; gap: 10px; width: 100%; }
-    .pomo-list { 
-      display: flex; flex-direction: column; gap: 8px; height: 160px; overflow-y: auto; padding-right: 6px; margin-bottom: 10px; 
-    }
-    .pomo-list::-webkit-scrollbar { width: 4px; }
-    .pomo-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+    .pomo-list { display: flex; flex-direction: column; gap: 8px; height: 160px; overflow-y: auto; padding-right: 6px; margin-bottom: 10px; }
+    .pomo-list.disabled-drag .pomo-drag-handle { cursor: not-allowed; opacity: 0.1; }
 
-    .pomo-item { 
-      display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 12px; border: 1px solid var(--glass-border); flex-shrink: 0; cursor: default; position: relative;
-    }
+    .pomo-item { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.05); padding: 6px 10px; border-radius: 12px; border: 1px solid var(--glass-border); flex-shrink: 0; cursor: default; position: relative; }
     .pomo-item.active-step { border-color: var(--prog-fill); background: rgba(99, 102, 241, 0.1); }
     
     .pomo-drag-handle { cursor: grab; padding: 0 4px; opacity: 0.4; font-size: 18px; user-select: none; }
@@ -276,15 +245,12 @@
     .tag-work { background: #ef4444; }
     .tag-rest { background: #10b981; }
     
-    .pomo-item input[type=number] { 
-      background: rgba(0,0,0,0.1); border: 1px solid var(--glass-border); color: var(--accent); border-radius: 8px; padding: 2px 4px; width: 48px; height: 28px; text-align: center; font-size: 14px; max-width: none; font-weight: 600;
-    }
+    .pomo-item input[type=number] { background: rgba(0,0,0,0.1); border: 1px solid var(--glass-border); color: var(--accent); border-radius: 8px; padding: 2px 4px; width: 48px; height: 28px; text-align: center; font-size: 14px; max-width: none; font-weight: 600; }
     .pomo-item span { font-size: 12px; opacity: 0.7; }
   </style>
 </head>
 <body data-mode="timer">
 
-<!-- 更新後的單色設定圖示按鈕 -->
 <button class="theme-toggle" id="openSettings" title="設定">
   <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12c0,0.31,0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
@@ -401,7 +367,6 @@
         <div><button class="btn btn-ghost" id="zeroBtn">歸零</button><span class="hint">鍵盤 Z</span></div>
       </div>
       
-      <!-- 保持加寬 40px 的狀態 -->
       <div id="timerQuickGroup" class="timer-quick-group">
         <div class="btn-grid" id="quickButtons">
           <button class="btn btn-ghost" data-min="30">+30分</button>
@@ -432,7 +397,6 @@
 </main>
 
 <script>
-// 所有 JavaScript 邏輯均與前版本一致，僅 UI CSS 與 HTML 小幅更動
 const timeEl=document.getElementById('time'), statusEl=document.getElementById('status'), modeLabel=document.getElementById('modeLabel'), startPauseBtn=document.getElementById('startPause'), resetBtn=document.getElementById('resetBtn'), zeroBtn=document.getElementById('zeroBtn'), hoursInput=document.getElementById('hours'), minutesInput=document.getElementById('minutes'), secondsInput=document.getElementById('seconds'), mainContainer=document.getElementById('mainContainer'), timeBox=document.getElementById('timeBox'), progRect=document.getElementById('progRect'), progContainer=document.getElementById('progContainer'), modeTimerBtn=document.getElementById('modeTimer'), modeStopwatchBtn=document.getElementById('modeStopwatch'), timerContent=document.getElementById('timerContent'), stopwatchContent=document.getElementById('stopwatchContent'), swStartPauseBtn=document.getElementById('swStartPause'), swLapBtn=document.getElementById('swLapBtn'), swResetBtn=document.getElementById('swResetBtn'), swFmtBtn=document.getElementById('swFmtBtn'), lapList=document.getElementById('lapList'), customAlarmSelect=document.getElementById('customAlarmSelect'), selectTrigger=document.getElementById('selectTrigger'), selectOptions=document.getElementById('selectOptions'), options=document.querySelectorAll('.option'), settingsModal=document.getElementById('settingsModal'), openSettingsBtn=document.getElementById('openSettings'), closeSettingsBtn=document.getElementById('closeSettings'), themeCheck=document.getElementById('themeCheck'), progCheck=document.getElementById('progCheck'), msCheck=document.getElementById('msCheck'), pomoCheck=document.getElementById('pomoCheck'), timerQuickGroup=document.getElementById('timerQuickGroup'), timerControls=document.getElementById('timerControls'), mainModeSwitcher=document.getElementById('mainModeSwitcher'), pomoEditor=document.getElementById('pomoEditor'), pomoList=document.getElementById('pomoList'), addWorkBtn=document.getElementById('addWorkBtn'), addRestBtn=document.getElementById('addRestBtn'), inputArea=document.getElementById('inputArea');
 
 let currentAlarm='beep', currentMode='timer', running=false, endTime=0, remaining=0, origRemaining=0, timer=null, showMs=false, swStartTime=0, swElapsed=0, totalLen=0;
@@ -575,43 +539,92 @@ function updateProgress(percent) {
   progRect.style.strokeDashoffset = totalLen - (percent * totalLen);
 }
 
-let audioCtx=null, activeIntervals = [];
-function initAudio() { if (!audioCtx) audioCtx=new (window.AudioContext || window.webkitAudioContext)(); }
+// --- 音效修正核心邏輯 (使用 Web Audio 原生排程) ---
+let audioCtx = null;
+let activeAlarmTimeouts = []; 
+
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+function clearExistingAlarms() {
+    activeAlarmTimeouts.forEach(t => {
+        clearTimeout(t);
+        clearInterval(t);
+    });
+    activeAlarmTimeouts = [];
+}
+
+/**
+ * 原生時間排程版播放函式
+ * @param {number} freq 頻率
+ * @param {number} duration 持續時間
+ * @param {number} pan 左右聲道 (-1 ~ 1)
+ * @param {string} typeOsc 波形
+ * @param {number} volume 音量
+ * @param {number} attack 漸強時間
+ * @param {number} startOffset 開始位移 (秒)
+ */
+function playStereoNote(freq, duration, pan = 0, typeOsc = 'sine', volume = 0.2, attack = 0.01, startOffset = 0) {
+  const startTime = audioCtx.currentTime + startOffset;
+  const osc = audioCtx.createOscillator(), gain = audioCtx.createGain(), panner = audioCtx.createStereoPanner();
+  
+  osc.type = typeOsc; 
+  osc.frequency.setValueAtTime(freq, startTime); 
+  try { panner.pan.setValueAtTime(pan, startTime); } catch(e){}
+  
+  osc.connect(gain); gain.connect(panner); panner.connect(audioCtx.destination);
+  
+  // 核心修正：所有的時間標記都基於同一個 startTime
+  gain.gain.setValueAtTime(0, startTime); 
+  gain.gain.linearRampToValueAtTime(volume, startTime + attack); 
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration); 
+  
+  osc.start(startTime); 
+  osc.stop(startTime + duration);
+}
 
 function playAlarm(type) {
-  initAudio(); if (audioCtx.state==='suspended') audioCtx.resume();
-  activeIntervals.forEach(t => { clearInterval(t); clearTimeout(t); });
-  activeIntervals = [];
-  const playStereoNote=(freq, duration, pan=0, typeOsc='sine', volume=0.2, attack=0.01) => {
-    const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(), panner=audioCtx.createStereoPanner();
-    osc.type=typeOsc; osc.frequency.setValueAtTime(freq, audioCtx.currentTime); panner.pan.setValueAtTime(pan, audioCtx.currentTime);
-    osc.connect(gain); gain.connect(panner); panner.connect(audioCtx.destination);
-    gain.gain.setValueAtTime(0, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(volume, audioCtx.currentTime+attack); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+duration);
-    osc.start(); osc.stop(audioCtx.currentTime+duration);
-  };
-  if (type==='beep') { 
-    let i=0; const interval=setInterval(() => { playStereoNote(880, 0.2, (i%2===0)?-0.4:0.4, 'sine', 0.15); if (++i>=5) clearInterval(interval); }, 300); 
-    activeIntervals.push(interval);
-  } else if (type==='bell') { 
+  initAudio(); 
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  clearExistingAlarms();
+
+  if (type === 'beep') { 
+    let i = 0; 
+    const interval = setInterval(() => { 
+      playStereoNote(880, 0.2, (i % 2 === 0) ? -0.4 : 0.4, 'sine', 0.15); 
+      if (++i >= 5) clearInterval(interval); 
+    }, 300); 
+    activeAlarmTimeouts.push(interval);
+  } else if (type === 'bell') { 
     playStereoNote(1250, 1.8, 0.3, 'triangle', 0.2); 
-    const t1 = setTimeout(() => playStereoNote(1000, 1.5, -0.3, 'triangle', 0.12), 120); 
-    activeIntervals.push(t1); 
-  } else if (type==='xylophone') { 
-    [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => { const t = setTimeout(() => playStereoNote(f, 0.6, [-0.6, -0.2, 0.2, 0.6][i], 'sine', 0.18), i*150); activeIntervals.push(t); }); 
-  } else if (type==='piano') { 
-    [261.63, 329.63, 392.00, 440.00].forEach((f, i) => { const t = setTimeout(() => playStereoNote(f, 3.5, [-0.4, -0.15, 0.15, 0.4][i], 'sine', 0.08, 0.25), i*120); activeIntervals.push(t); }); 
+    playStereoNote(1000, 1.5, -0.3, 'triangle', 0.12, 0.01, 0.12); // 使用 offset 替代 setTimeout
+  } else if (type === 'xylophone') { 
+    const freqs = [523.25, 659.25, 783.99, 1046.50];
+    const pans = [-0.6, -0.2, 0.2, 0.6];
+    freqs.forEach((f, i) => { 
+      // 改為直接排程
+      playStereoNote(f, 0.6, pans[i], 'sine', 0.18, 0.01, i * 0.15);
+    }); 
+  } else if (type === 'piano') { 
+    const freqs = [261.63, 329.63, 392.00, 440.00];
+    const pans = [-0.4, -0.15, 0.15, 0.4];
+    freqs.forEach((f, i) => { 
+      // 改為直接排程，增大 attack 時間營造鋼琴感
+      playStereoNote(f, 3.5, pans[i], 'sine', 0.08, 0.25, i * 0.12);
+    }); 
   }
 }
 
 selectTrigger.onclick = (e) => { e.stopPropagation(); customAlarmSelect.classList.toggle('open'); };
 options.forEach(opt => opt.onclick = () => { 
   options.forEach(o => o.classList.remove('selected')); opt.classList.add('selected'); 
-  currentAlarm=opt.dataset.value; selectTrigger.textContent=opt.textContent; 
-  customAlarmSelect.classList.remove('open'); playAlarm(currentAlarm); 
+  currentAlarm = opt.dataset.value; selectTrigger.textContent = opt.textContent; 
+  customAlarmSelect.classList.remove('open'); 
+  playAlarm(currentAlarm); 
 });
 document.addEventListener('click', () => customAlarmSelect.classList.remove('open'));
 
-function adjustContainerHeight() { mainContainer.style.height='auto'; mainContainer.style.height=mainContainer.scrollHeight+'px'; }
+function adjustContainerHeight() { mainContainer.style.height = 'auto'; mainContainer.style.height = mainContainer.scrollHeight + 'px'; }
 
 function syncQuickGroupWidth() {
   if (currentMode === 'timer' && !isPomo) {
@@ -619,82 +632,83 @@ function syncQuickGroupWidth() {
   }
 }
 
-function format(ms, withMs=false) {
-  if (ms<0) ms=0;
-  const s=Math.floor(ms/1000)%60, m=Math.floor(ms/60000)%60, h=Math.floor(ms/3600000);
-  const hh=String(h).padStart(2,'0'), mm=String(m).padStart(2,'0'), ss=String(s).padStart(2,'0');
-  return withMs ? `${hh}:${mm}:${ss}.${String(Math.floor((ms%1000)/10)).padStart(2,'0')}` : `${hh}:${mm}:${ss}`;
+function format(ms, withMs = false) {
+  if (ms < 0) ms = 0;
+  const s = Math.floor(ms / 1000) % 60, m = Math.floor(ms / 60000) % 60, h = Math.floor(ms / 3600000);
+  const hh = String(h).padStart(2,'0'), mm = String(m).padStart(2,'0'), ss = String(s).padStart(2,'0');
+  return withMs ? `${hh}:${mm}:${ss}.${String(Math.floor((ms % 1000) / 10)).padStart(2,'0')}` : `${hh}:${mm}:${ss}`;
 }
 
 function updateTimer() {
-  const now=Date.now(); remaining=endTime-now;
-  if (remaining<=0) { 
-    clearInterval(timer); running=false; remaining=0; 
-    startPauseBtn.textContent='開始'; updateProgress(0); playAlarm(currentAlarm);
+  const now = Date.now(); remaining = endTime - now;
+  if (remaining <= 0) { 
+    clearInterval(timer); running = false; remaining = 0; 
+    startPauseBtn.textContent = '開始'; updateProgress(0); 
+    playAlarm(currentAlarm); 
     if (isPomo) {
       currentPomoIdx++;
       if (currentPomoIdx < pomoQueue.length) { statusEl.textContent = '階段完成！'; prepareNextPomo(); } 
       else { statusEl.textContent = '所有排程已完成！'; currentPomoIdx = -1; }
-    } else { statusEl.textContent='時間到！'; }
+    } else { statusEl.textContent = '時間到！'; }
     updateLockState();
-  } else { updateProgress(remaining/origRemaining); }
-  timeEl.textContent=format(remaining, showMs);
+  } else { updateProgress(remaining / origRemaining); }
+  timeEl.textContent = format(remaining, showMs);
 }
 
 function refreshDisplay() {
-  if (running || currentMode!=='timer' || isPomo) return;
-  remaining=( (Number(hoursInput.value)||0)*3600+(Number(minutesInput.value)||0)*60+(Number(secondsInput.value)||0) )*1000;
-  origRemaining=remaining; timeEl.textContent=format(remaining, showMs); updateProgress(remaining>0?1:0);
+  if (running || currentMode !== 'timer' || isPomo) return;
+  remaining = ( (Number(hoursInput.value) || 0) * 3600 + (Number(minutesInput.value) || 0) * 60 + (Number(secondsInput.value) || 0) ) * 1000;
+  origRemaining = remaining; timeEl.textContent = format(remaining, showMs); updateProgress(remaining > 0 ? 1 : 0);
 }
 
-function adjustTime(minutesDelta=0, secondsDelta=0) {
+function adjustTime(minutesDelta = 0, secondsDelta = 0) {
   if (isPomo || running) return;
-  remaining=Math.max(0, remaining+minutesDelta*60000+secondsDelta*1000);
-  timeEl.textContent=format(remaining, showMs);
-  const totalSec=Math.floor(remaining/1000); 
-  hoursInput.value=Math.floor(totalSec/3600); minutesInput.value=Math.floor((totalSec%3600)/60); secondsInput.value=totalSec%60;
-  origRemaining=Math.max(remaining, origRemaining); updateProgress(origRemaining>0?remaining/origRemaining:0);
+  remaining = Math.max(0, remaining + minutesDelta * 60000 + secondsDelta * 1000);
+  timeEl.textContent = format(remaining, showMs);
+  const totalSec = Math.floor(remaining / 1000); 
+  hoursInput.value = Math.floor(totalSec / 3600); minutesInput.value = Math.floor((totalSec % 3600) / 60); secondsInput.value = totalSec % 60;
+  origRemaining = Math.max(remaining, origRemaining); updateProgress(origRemaining > 0 ? remaining / origRemaining : 0);
 }
 
 function handleFormatToggle(force) {
   showMs = (typeof force === 'boolean') ? force : !showMs;
   msCheck.checked = showMs;
-  const displayVal=currentMode==='timer'?remaining:(running?swElapsed+(Date.now()-swStartTime):swElapsed);
-  timeEl.textContent=format(displayVal, showMs);
-  if (running) { clearInterval(timer); timer=setInterval(currentMode==='timer'?updateTimer:()=>timeEl.textContent=format(swElapsed+(Date.now()-swStartTime), showMs), showMs?50:100); }
+  const displayVal = currentMode === 'timer' ? remaining : (running ? swElapsed + (Date.now() - swStartTime) : swElapsed);
+  timeEl.textContent = format(displayVal, showMs);
+  if (running) { clearInterval(timer); timer = setInterval(currentMode === 'timer' ? updateTimer : () => timeEl.textContent = format(swElapsed + (Date.now() - swStartTime), showMs), showMs ? 50 : 100); }
 }
 
 function switchMode(mode) {
-  if (currentMode===mode || running) return;
+  if (currentMode === mode || running) return;
   document.body.setAttribute('data-mode', mode);
-  const oldContent=currentMode==='timer'?timerContent:stopwatchContent;
-  oldContent.style.opacity='0'; oldContent.style.transform='translateY(-10px)';
+  const oldContent = currentMode === 'timer' ? timerContent : stopwatchContent;
+  oldContent.style.opacity = '0'; oldContent.style.transform = 'translateY(-10px)';
   
   setTimeout(() => {
-    oldContent.classList.remove('active'); currentMode=mode;
-    const newContent=mode==='timer'?timerContent:stopwatchContent;
+    oldContent.classList.remove('active'); currentMode = mode;
+    const newContent = mode === 'timer' ? timerContent : stopwatchContent;
     newContent.classList.add('active'); 
     adjustContainerHeight();
     
     requestAnimationFrame(() => { 
-      newContent.style.opacity='1'; 
-      newContent.style.transform='translateY(0)'; 
+      newContent.style.opacity = '1'; 
+      newContent.style.transform = 'translateY(0)'; 
       initProgress(); 
       syncQuickGroupWidth(); 
     });
 
-    if (mode==='timer') { 
+    if (mode === 'timer') { 
       modeTimerBtn.classList.add('active'); 
       modeStopwatchBtn.classList.remove('active'); 
-      modeLabel.textContent=isPomo?'番茄鐘排程模式':'倒數計時器'; 
+      modeLabel.textContent = isPomo ? '番茄鐘排程模式' : '倒數計時器'; 
       refreshDisplay(); 
     } else { 
       modeStopwatchBtn.classList.add('active'); 
       modeTimerBtn.classList.remove('active'); 
-      modeLabel.textContent='碼表'; 
-      swElapsed=0; timeEl.textContent=format(0, showMs); 
-      statusEl.textContent='準備就緒'; 
-      lapList.innerHTML=''; 
+      modeLabel.textContent = '碼表'; 
+      swElapsed = 0; timeEl.textContent = format(0, showMs); 
+      statusEl.textContent = '準備就緒'; 
+      lapList.innerHTML = ''; 
       updateProgress(0); 
     }
   }, 300);
@@ -714,45 +728,47 @@ startPauseBtn.onclick = () => {
   initAudio(); 
   if(!running){ 
     if(isPomo && currentPomoIdx === -1) { currentPomoIdx = 0; prepareNextPomo(); }
-    if(remaining<=0) return;
-    endTime=Date.now()+remaining; if(origRemaining===0)origRemaining=remaining; timer=setInterval(updateTimer, showMs?50:100); running=true; startPauseBtn.textContent='暫停'; 
-    statusEl.textContent=isPomo ? (pomoQueue[currentPomoIdx].type === 'work' ? '專注中...' : '休息中...') : '倒數中'; 
-  } else { clearInterval(timer); running=false; startPauseBtn.textContent='開始'; statusEl.textContent='已暫停'; }
+    if(remaining <= 0) return;
+    endTime = Date.now() + remaining; if(origRemaining === 0) origRemaining = remaining; 
+    timer = setInterval(updateTimer, showMs ? 50 : 100); running = true; 
+    startPauseBtn.textContent = '暫停'; 
+    statusEl.textContent = isPomo ? (pomoQueue[currentPomoIdx].type === 'work' ? '專注中...' : '休息中...') : '倒數中'; 
+  } else { clearInterval(timer); running = false; startPauseBtn.textContent = '開始'; statusEl.textContent = '已暫停'; }
   updateLockState();
   renderPomoList();
 };
 
 resetBtn.onclick = () => { 
-  clearInterval(timer); running=false; 
+  clearInterval(timer); running = false; 
   if(isPomo){ prepareNextPomo(); } 
-  else { remaining=( (Number(hoursInput.value)||0)*3600+(Number(minutesInput.value)||0)*60+(Number(secondsInput.value)||0) )*1000; origRemaining=remaining; timeEl.textContent=format(remaining, showMs); updateProgress(remaining>0?1:0); } 
-  startPauseBtn.textContent='開始'; statusEl.textContent='已重置'; updateLockState(); 
+  else { remaining = ( (Number(hoursInput.value) || 0) * 3600 + (Number(minutesInput.value) || 0) * 60 + (Number(secondsInput.value) || 0) ) * 1000; origRemaining = remaining; timeEl.textContent = format(remaining, showMs); updateProgress(remaining > 0 ? 1 : 0); } 
+  startPauseBtn.textContent = '開始'; statusEl.textContent = '已重置'; updateLockState(); 
 };
 
 zeroBtn.onclick = () => { 
-  clearInterval(timer); running=false; 
-  if(isPomo){ pomoQueue=[]; renderPomoList(); currentPomoIdx=-1; statusEl.textContent='排程已清空'; } 
-  else { remaining=0; origRemaining=0; hoursInput.value=0; minutesInput.value=0; secondsInput.value=0; timeEl.textContent=format(0, showMs); updateProgress(0); statusEl.textContent='歸零'; } 
-  startPauseBtn.textContent='開始'; updateLockState(); 
+  clearInterval(timer); running = false; 
+  if(isPomo){ pomoQueue = []; renderPomoList(); currentPomoIdx = -1; statusEl.textContent = '排程已清空'; } 
+  else { remaining = 0; origRemaining = 0; hoursInput.value = 0; minutesInput.value = 0; secondsInput.value = 0; timeEl.textContent = format(0, showMs); updateProgress(0); statusEl.textContent = '歸零'; } 
+  startPauseBtn.textContent = '開始'; updateLockState(); 
 };
 
 swStartPauseBtn.onclick = () => {
-  initAudio(); if (!running) { swStartTime=Date.now(); timer=setInterval(()=>timeEl.textContent=format(swElapsed+(Date.now()-swStartTime), showMs), showMs?50:100); running=true; swStartPauseBtn.textContent='暫停'; statusEl.textContent='碼表中...'; }
-  else { clearInterval(timer); swElapsed+=(Date.now()-swStartTime); running=false; swStartPauseBtn.textContent='開始'; statusEl.textContent='暫停'; }
+  initAudio(); if (!running) { swStartTime = Date.now(); timer = setInterval(() => timeEl.textContent = format(swElapsed + (Date.now() - swStartTime), showMs), showMs ? 50 : 100); running = true; swStartPauseBtn.textContent = '暫停'; statusEl.textContent = '碼表中...'; }
+  else { clearInterval(timer); swElapsed += (Date.now() - swStartTime); running = false; swStartPauseBtn.textContent = '開始'; statusEl.textContent = '暫停'; }
   updateLockState();
 };
 
-swLapBtn.onclick = () => { if(!running && swElapsed===0)return; const current=running?swElapsed+(Date.now()-swStartTime):swElapsed; const li=document.createElement('li'); li.className='lap-item'; li.innerHTML=`<span>次數 ${lapList.children.length+1}</span> <span>${format(current, showMs)}</span>`; lapList.prepend(li); };
-swResetBtn.onclick = () => { clearInterval(timer); running=false; swElapsed=0; swStartPauseBtn.textContent='開始'; statusEl.textContent='準備就緒'; timeEl.textContent=format(0, showMs); lapList.innerHTML=''; updateLockState(); };
+swLapBtn.onclick = () => { if(!running && swElapsed === 0) return; const current = running ? swElapsed + (Date.now() - swStartTime) : swElapsed; const li = document.createElement('li'); li.className = 'lap-item'; li.innerHTML = `<span>次數 ${lapList.children.length + 1}</span> <span>${format(current, showMs)}</span>`; lapList.prepend(li); };
+swResetBtn.onclick = () => { clearInterval(timer); running = false; swElapsed = 0; swStartPauseBtn.textContent = '開始'; statusEl.textContent = '準備就緒'; timeEl.textContent = format(0, showMs); lapList.innerHTML = ''; updateLockState(); };
 swFmtBtn.onclick = () => handleFormatToggle();
 
 window.onkeydown = e => {
-  if (document.activeElement.tagName==='INPUT') return;
+  if (document.activeElement.tagName === 'INPUT') return;
   switch(e.key.toLowerCase()) {
-    case ' ': e.preventDefault(); currentMode==='timer'?startPauseBtn.click():swStartPauseBtn.click(); break;
-    case 'r': currentMode==='timer'?resetBtn.click():swLapBtn.click(); break;
-    case 'z': currentMode==='timer'?zeroBtn.click():swResetBtn.click(); break;
-    case 'f': if(currentMode==='stopwatch') swFmtBtn.click(); break;
+    case ' ': e.preventDefault(); currentMode === 'timer' ? startPauseBtn.click() : swStartPauseBtn.click(); break;
+    case 'r': currentMode === 'timer' ? resetBtn.click() : swLapBtn.click(); break;
+    case 'z': currentMode === 'timer' ? zeroBtn.click() : swResetBtn.click(); break;
+    case 'f': if(currentMode === 'stopwatch') swFmtBtn.click(); break;
   }
 };
 
